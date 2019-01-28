@@ -13,6 +13,7 @@ class DefectComparison(object):
         self.resizedef = resizedef
 
     def getone(self, n, shape, hov):
+        # 防止Main匹配时切图切片值比图片像素大而返回空图
         if n < 0:
             return 0
         else:
@@ -28,6 +29,7 @@ class DefectComparison(object):
                     return n
 
     def getOverlapping(self, ptss, target):
+        # 零件的匹配，矩阵相加进行匹配
         im1 = np.zeros(self.shape[:2], dtype=np.uint8)
         for pts in ptss:
             im1 = cv.fillConvexPoly(im1, pts, 1)
@@ -47,6 +49,7 @@ class DefectComparison(object):
             return 0
 
     def getMOverlapping(self, m, target):
+        # 进行piex个数的匹配，将图片一个piex一个piex的切开，故障同理然后匹配，快
         sum_m = 0
 
         im1 = np.ones(self.shape[:2], dtype=np.uint8)
@@ -80,6 +83,7 @@ class DefectComparison(object):
         return sum_m
 
     def getReturn(self, m1, m2, m):
+        # 返回最终要求的result，自行定义
         result = {}
         result['AFFECTEDPIXELNUM'] = m
         if not m1:
@@ -107,14 +111,18 @@ class DefectComparison(object):
         return result
 
     def getQOut(self, target=0):
+        # 与m1相加个数，m2相交个数，影响了几个piex
         sum_m1 = 0
         sum_m2 = 0
         sum_m = 0
 
+        # 一组一组与故障匹配，如果不要求故障个数可以将m1放在循环外，一次性匹配更快，m2同理
         for i in range(len(self.ptdic['Main'])):
             m1 = []
+            # 将一组零件放入一个list
             for key in ['M1-1', 'M1-2', 'M1-3']:
                 m1.append(self.ptdic[key][i])
+            # 匹配故障
             if self.getOverlapping(m1, target):
                 sum_m1 += 1
 
@@ -125,6 +133,7 @@ class DefectComparison(object):
             if self.getOverlapping(m2, target):
                 sum_m2 += 1
 
+        # 计算piex的思路不同，是把所有main放入一个list，然后切块匹配
         m = []
         for i in range(len(self.ptdic['Main'])):
             for key in ['Main']:
