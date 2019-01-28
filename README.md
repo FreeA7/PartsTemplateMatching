@@ -11,6 +11,9 @@
 * 最好使用类似 Photoshop 等软件进行描点，达到最好的匹配效率
 * 请预先模仿 GetBestMatching 类中生成二值图片的方法生成好二值 feature ，参数都是我多次测试模拟效果最好的，一般不要改动，如果效果很差可自行调整。
 
+## 算法总览
+<div align=center><img src="./Resources/算法总览.jpg"/></div>
+
 ## 各文件描述
 ### init.py
 * 这是执行文件，可在这里执行各种方法
